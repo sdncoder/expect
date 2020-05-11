@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+set timeout 15
+##set host [lindex $argv 0]
+set usjuser [lindex $argv 0]
+set usjpass [lindex $argv 1]
+set uosso [lindex $argv 2]
+set uopass [lindex $argv 3]
+set f [open "/root/hosts/nexus.txt"]
+set host [split [read $f] "\n"]
+close $f
+
+foreach host $host {
+ spawn ssh -o StrictHostKeyChecking=no $usjuser@$host
+ expect "Password: "
+ send "$usjpass\r"
+ expect "# "
+ send "copy startup-config scp://10.18.78.50/home/use.ucdp.net/703102819/usj vrf management\n"
+ expect "Enter username: "
+ send "$uosso\r"
+ expect "Password: "
+ send "$uopass\r"
+ expect "# "
+ send "exit\n"
+ expect eof
+}
