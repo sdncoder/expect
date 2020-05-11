@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+# backup IOS and IOS-XE devices when SCP and TFTP do not work
+# copy show running screen scroll to file
+
+set timeout 10
+
+# USJ local creds
+set usjuser [lindex $argv 0]
+set usjpass [lindex $argv 1]
+# Open hosts file
+set f [open "/root/hosts/ios_devices.txt"]
+set host [split [read $f] "\n"]
+close $f
+
+foreach host $host {
+ spawn ssh -o StrictHostKeyChecking=no $usjuser@$host
+ expect "Password: "
+ send "$usjpass\r"
+ expect "# "
+ send "terminal length 0\n"
+ expect "# "
+ send "show run\r"
+ expect "# "
+ send "exit\n"
+ expect eof
