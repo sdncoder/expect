@@ -1,1 +1,1 @@
-# tcl-expect
+# shell scripts
